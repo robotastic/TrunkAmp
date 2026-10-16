@@ -572,7 +572,7 @@ const removed = new Set(), sel = new Set();
 let anchor = null;
 
 function rebuild() {
-  calls = rec.history.slice().reverse();
+  calls = rec.history.slice();
   byPath = new Map(calls.map((e) => [e.path, e]));
   refilter();
 }
