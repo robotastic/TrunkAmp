@@ -258,7 +258,9 @@ const QUIET = 1.5; // s without audio that ends a live call
 
 const audio = new Audio();
 audio.preload = "auto";
-if (server) audio.crossOrigin = "anonymous";
+audio.crossOrigin = "anonymous";
+audio.setAttribute("playsinline", "");
+audio.setAttribute("webkit-playsinline", "");
 
 // Live chunks and recorded calls share one graph, so the EQ and visualizer
 // work on both: sources → preamp → EQ → balance → volume → analyser → out.
