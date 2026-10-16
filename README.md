@@ -161,13 +161,34 @@ Trunkamp provides a retro audio player interface for browsing, filtering, and pl
 
 ## Deployment
 
-### Serve from Trunk Recorder Pro
+### Install it from Trunk Recorder Pro
+
+Once Trunkamp is listed in the [interface store](https://github.com/TrunkRecorder/interfaces),
+open the recorder's **Interfaces** page, find Trunkamp under **Find interfaces** and click
+**Install**. The recorder serves it on a port of its own (8081, say) — separate from the
+recorder's own interface — and **Open** takes you there. On a recorder with no browser nearby:
 
 ```bash
-trunk-pro --ui ./Interface → http://localhost:8080/
+trunk-pro interface install trunkamp
 ```
 
-### Connect to Remote Recorder
+Until then, install a release straight from GitHub: **Install from GitHub…** on the Interfaces
+page with `https://github.com/ge0metrix/TrunkAmp`, or
+`trunk-pro interface install ge0metrix/TrunkAmp`.
+
+Trunkamp asks for **listen** access: it sees and plays everything, and changes nothing. Starting
+and stopping recording from its Options menu needs **control**, which you can give it on the
+Interfaces page.
+
+### Try this folder
+
+```bash
+trunk-pro --ui ./interface
+```
+
+serves it for one run, on the next free port, and opens it.
+
+### Connect to a remote recorder
 
 Use the `?server=host:port` query parameter:
 
@@ -175,7 +196,25 @@ Use the `?server=host:port` query parameter:
 http://your-domain.com/trunkamp.html?server=recorder:8080
 ```
 
-The page's origin must be added to the recorder's `allowedOrigins` configuration.
+The page's origin must be added to the recorder's `allowedOrigins` configuration (**Pages served
+elsewhere** on its Interfaces page).
+
+## Releasing
+
+Releases are what the interface store installs. To make one:
+
+1. Set the new `version` in `interface/interface.json`.
+2. Tag the commit `v<version>` and push the tag:
+
+   ```bash
+   git tag v1.0.1 && git push origin v1.0.1
+   ```
+
+The release workflow (`.github/workflows/release.yml`) packages `interface/` as
+`trunkamp-<version>.zip`, releases the screenshots beside it and writes `SHA256SUMS`, with a build
+provenance attestation for each file. Run `.github/package.sh` to see what a release will hold.
+Then a registry pull request (`./add-release https://github.com/ge0metrix/TrunkAmp v1.0.1` in
+[TrunkRecorder/interfaces](https://github.com/TrunkRecorder/interfaces)) lists the new version.
 
 ## Technical Details
 
@@ -209,7 +248,8 @@ The page's origin must be added to the recorder's `allowedOrigins` configuration
 ## Troubleshooting
 
 - **"AUDIO NOT AVAILABLE"** - The call's audio file was not kept by the recorder or failed to download
-- **"CONNECTION FAILED"** - Verify the recorder URL and that your origin is in `allowedOrigins`
+- **"CONNECTION FAILED"** - Verify the recorder URL and, when the page isn't served by the recorder, that its origin is in `allowedOrigins`
+- **Start/Stop does nothing** - Trunkamp has listen access; give it control on the recorder's Interfaces page
 - **Live stream won't play** - Ensure HOLD is not locked to an inactive talkgroup
 - **EQ not audible** - Toggle the EQ ON/OFF button to enable processing
 
